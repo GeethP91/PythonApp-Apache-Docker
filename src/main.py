@@ -6,19 +6,24 @@ import requests
 import json
 import webbrowser
 
+from flask import Flask, render_template, request, jsonify, url_for, redirect
+
+app = Flask(__name__)
 
 def joke():
     f = r"http://api.icndb.com/jokes/random"
     data = requests.get(f)
     tt = json.loads(data.text)
     result = tt["value"]["joke"]
-    sys.stdout = open('JokeForToday.html','w')
-
-    print ("<html>")
-    print ("<h1 style=text-align:center;color:red;font-size:90><b>CHUCK NORRIS RANDOM JOKE FOR THE DAY</b></h1>")
-    print ("<p style=text-align:center;color:blue;font-size:60>%s</p>" % result)
-    print ("</html>")
-    webbrowser.get('firefox').open('JokeForToday.html', new=2)
+    return result
 
 joke()
+
+
+@app.route('/')
+def index():
+    return render_template("index.html", data = joke())
+
+if __name__ == "__main__":
+    app.run(port='5000', host='0.0.0.0', debug = True)
 
